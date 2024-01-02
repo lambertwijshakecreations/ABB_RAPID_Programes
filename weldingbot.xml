@@ -1,0 +1,687 @@
+MODULE BANDLAS_VASTE_ROBOT;
+    !Lastijden.
+    CONST num WeldTime:=0.5;
+    CONST num WeldTime1:=0.65;
+    CONST num WeldTime2:=0.6;
+    CONST num WeldTime3:=0.6;
+    !Borstelen.
+    PERS num Borstel_tel:=2;
+    PERS num Q_Borstel:=2
+    !Frees.
+    PERS num Q_Freescyclus:=3;
+    VAR num Frees_tyd:=3;
+    !lasprocedure.
+    PERS num LasProc:=1; 
+    !Aanpassingen hoogte voor dubbel spijl.
+    CONST num Hoogte1:=60;
+    LOCAL VAR num ZHoogte8_1:=5;
+    LOCAL VAR num ZHoogte8_2:=10;
+    LOCAL VAR num ZHoogte8_3:=15;
+    LOCAL VAR num ZHoogte7_1:=5;
+    LOCAL VAR num ZHoogte7_2:=10;
+    LOCAL VAR num ZHoogte7_3:=15;
+    LOCAL VAR num ZHoogte6_1:=5;
+    LOCAL VAR num ZHoogte6_2:=10;
+    LOCAL VAR num ZHoogte6_3:=15;
+    LOCAL VAR num ZHoogte5_1:=5;
+    LOCAL VAR num ZHoogte5_2:=10;
+    LOCAL VAR num ZHoogte5_3:=15;
+    LOCAL VAR num ZHoogte4_1:=5;
+    LOCAL VAR num ZHoogte4_2:=10;
+    LOCAL VAR num ZHoogte4_3:=15;
+    LOCAL VAR num ZHoogte3_1:=5;
+    LOCAL VAR num ZHoogte3_2:=10;
+    LOCAL VAR num ZHoogte3_3:=15;
+    LOCAL VAR num ZHoogte2_1:=5;
+    LOCAL VAR num ZHoogte2_2:=10;
+    LOCAL VAR num ZHoogte2_3:=15;
+    LOCAL VAR num ZHoogte1_1:=5;
+    LOCAL VAR num ZHoogte1_2:=10;
+    LOCAL VAR num ZHoogte1_3:=15;
+    !Aanpasingen op Z ass.
+    LOCAL VAR num Z8_1:=0;
+    LOCAL VAR num Z8_2:=0;
+    LOCAL VAR num Z8_3:=0;
+    LOCAL VAR num Z7_1:=0;
+    LOCAL VAR num Z7_2:=0;
+    LOCAL VAR num Z7_3:=0;
+    LOCAL VAR num Z6_1:=0;
+    LOCAL VAR num Z6_2:=0;
+    LOCAL VAR num Z6_3:=0;
+    LOCAL VAR num Z5_1:=0;
+    LOCAL VAR num Z5_2:=0;
+    LOCAL VAR num Z5_3:=0;
+    LOCAL VAR num Z4_1:=0;
+    LOCAL VAR num Z4_2:=0;
+    LOCAL VAR num Z4_3:=0;
+    LOCAL VAR num Z3_1:=0;
+    LOCAL VAR num Z3_2:=0;
+    LOCAL VAR num Z3_3:=0;
+    LOCAL VAR num Z2_1:=0;
+    LOCAL VAR num Z2_2:=0;
+    LOCAL VAR num Z2_3:=0;
+    LOCAL VAR num Z1_1:=0;
+    LOCAL VAR num Z1_2:=0;
+    LOCAL VAR num Z1_3:=0;
+    !Aanpasingen op Y ass.
+    LOCAL VAR num Y8_1:=0;
+    LOCAL VAR num Y8_2:=0;
+    LOCAL VAR num Y8_3:=0;
+    LOCAL VAR num Y7_1:=0;
+    LOCAL VAR num Y7_2:=0;
+    LOCAL VAR num Y7_3:=0;
+    LOCAL VAR num Y6_1:=0;
+    LOCAL VAR num Y6_2:=0;
+    LOCAL VAR num Y6_3:=0;
+    LOCAL VAR num Y5_1:=0;
+    LOCAL VAR num Y5_2:=0;
+    LOCAL VAR num Y5_3:=0;
+    LOCAL VAR num Y4_1:=0;
+    LOCAL VAR num Y4_2:=0;
+    LOCAL VAR num Y4_3:=0;
+    LOCAL VAR num Y3_1:=0;
+    LOCAL VAR num Y3_2:=0;
+    LOCAL VAR num Y3_3:=0;
+    LOCAL VAR num Y2_1:=0;
+    LOCAL VAR num Y2_2:=0;
+    LOCAL VAR num Y2_3:=0;
+    LOCAL VAR num Y1_1:=0;
+    LOCAL VAR num Y1_2:=0;
+    LOCAL VAR num Y1_3:=0;
+    !Aanpassingen op X ass.
+    LOCAL VAR num X8_1:=0;
+    LOCAL VAR num X8_2:=0;
+    LOCAL VAR num X8_3:=0;
+    LOCAL VAR num X7_1:=0;
+    LOCAL VAR num X7_2:=0;
+    LOCAL VAR num X7_3:=0;
+    LOCAL VAR num X6_1:=0;
+    LOCAL VAR num X6_2:=0;
+    LOCAL VAR num X6_3:=0;
+    LOCAL VAR num X5_1:=0;
+    LOCAL VAR num X5_2:=0;
+    LOCAL VAR num X5_3:=0;
+    LOCAL VAR num X4_1:=0;
+    LOCAL VAR num X4_2:=0;
+    LOCAL VAR num X4_3:=0;
+    LOCAL VAR num X3_1:=0;
+    LOCAL VAR num X3_2:=0;
+    LOCAL VAR num X3_3:=0;
+    LOCAL VAR num X2_1:=0;
+    LOCAL VAR num X2_2:=0;
+    LOCAL VAR num X2_3:=0;
+    LOCAL VAR num X1_1:=0;
+    LOCAL VAR num X1_2:=0;
+    LOCAL VAR num X1_3:=0;
+    !Aangepaste wachttijden.
+    VAR num Wachten_DL1:=0.94;
+    VAR num Wachten_DL:=0.5; 
+    !Robtargets.
+    CONST robtarget Las8_3:=[[138.17,132.03,-277.77],[0.722266,-0.004675,-0.691014,-0.028474],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las7_3:=[[142.64,66.73,-281.21],[0.722305,-0.004643,-0.690977,-0.028408],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las6_3:=[[142.15,-0.53,-280.36],[0.722338,-0.004555,-0.690945,-0.028346],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las5_3:=[[138.81,-66.33,-280.15],[0.722347,-0.004475,-0.690935,-0.028364],[1,-1,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las4_3:=[[149.66,-32.44,-272.21],[0.722327,-0.004409,-0.690958,-0.028339],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las3_3:=[[151.21,33.14,-270.66],[0.721934,0.004164,-0.690952,-0.03716],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las2_3:=[[149.67,98.69,-267.74],[0.721921,0.004367,-0.690965,-0.03714],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las1_3:=[[145.34,162.38,-264.09],[0.721918,0.00447,-0.690972,-0.037057],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las1_2:=[[158.12,138.69,-270.74],[0.702743,0.063674,-0.656556,-0.266521],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las2_2:=[[156.98,72.42,-274.27],[0.702714,0.063884,-0.656568,-0.266518],[1,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las3_2:=[[152.8,6.83,-275.39],[0.702676,0.063959,-0.656575,-0.266584],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las4_2:=[[148.9,-53.9,-274.61],[0.702607,0.06413,-0.656603,-0.266655],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las5_2:=[[138.6,-83.36,-282.88],[0.702554,0.064162,-0.656639,-0.266697],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las6_2:=[[143.5,-25.03,-282.46],[0.702529,0.064172,-0.656647,-0.266741],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las7_2:=[[147.32,41.04,-282.6],[0.729157,0.075081,-0.626981,-0.263797],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las8_2:=[[151.16,102.84,-278.73],[0.717724,0.111236,-0.615222,-0.306599],[1,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las8_1:=[[72.19,103.78,-287.72],[0.709054,-0.166057,-0.655132,0.201173],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las7_1:=[[68.08,52.24,-284.51],[0.709051,-0.166111,-0.655086,0.201291],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las6_1:=[[63.66,0.79,-283.17],[0.709088,-0.166431,-0.654908,0.201472],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las5_1:=[[57.76,-46.96,-281.26],[0.709138,-0.166452,-0.654869,0.201406],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las4_1:=[[68.45,-23.47,-276.95],[0.70891,-0.167767,-0.65436,0.202768],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las3_1:=[[73.31,28.46,-276.26],[0.715984,-0.143957,-0.659933,0.176445],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las2_1:=[[77.45,79.93,-278.02],[0.715946,-0.143968,-0.659971,0.176448],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Las1_1:=[[81.13,133.11,-280.65],[0.715877,-0.143839,-0.660098,0.176359],[0,0,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Borstel_start:=[[-114.88,-98.25,-81.04],[0.695872,0.279517,-0.571133,-0.333829],[1,-1,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Borstel_eind:=[[-114,74.88,-86.75],[0.705125,0.255235,-0.58348,-0.31178],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Freesplek:=[[37.25,152.76,-92.94],[0.710174,0.173892,-0.64396,-0.225235],[0,0,-1,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    PERS robtarget p2:=[[-138.112,-175.012,-155.995],[0.705391,0.0160529,-0.704236,-0.0788634],[1,-1,0,4],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    !Speeddatas.
+    CONST speeddata V_Borstellen:=[300,300,5000,1000];
+    CONST speeddata V_Hor:=[2000,500,5000,1000];
+    CONST speeddata V_Pos_W:=[2000,500,5000,1000];
+    CONST speeddata V_Pos_H:=[2500,500,5000,1000];
+    CONST speeddata V_Trans:=[7000,500,5000,1000];
+    VAR speeddata V_Las_H:=[50,500,5000,1000];
+    !Tooldata.
+    PERS tooldata Victoria:=[TRUE,[[-208.761,79.1592,-7.84231],[1,0,0,0]],[5,[85,0,85],[1,0,0,0],0.012,0.012,0.012]];
+    !Werkobject.
+    PERS wobjdata wobjbaan3:=[FALSE,TRUE,"",[[0,0,0],[1,0,0,0]],[[78.4038,5.43286,-807.018],[0.707181,-7.3E-05,7.3E-05,-0.707033]]];
+
+    ! Keuze menu.
+    PROC MAIN()
+        MoveJ Offs(Las1_1,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+        IF LasProc=1 THEN
+            LakDraad;
+        ENDIF
+        IF LasProc=2 THEN
+            RVS;
+        ENDIF
+        IF LasProc=3 THEN
+            DubbelSpyl;
+        ENDIF
+        IF LasProc=4 THEN
+            Transport;
+        ENDIF
+    ENDPROC
+
+    !Procedure voor lakdraad op staal.
+    PROC LakDraad()
+        VelSet 100,7000;
+        AccSet 100,100;
+        IF Vrygave1=1 Q_Freescyclus:=Q_Freescyclus+50;
+            MoveJ Offs(Las1_1,0,0,40),v1000,fine,Victoria\WObj:=wobjbaan3;
+            SetDO Sig_Las_verb,0;
+            SetDO doPLC_Busy,0;
+            SetDO doPLC_Ready,0;
+            WaitDI diPLC_Request,1;
+            SetDO doPLC_Busy,1;
+            Q_Freescyclus:=Q_Freescyclus+1;
+            MoveL Offs(Las1_1,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las1_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las1_1,X1_1,Y1_1,Z1_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las1_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las2_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las2_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las2_1,X2_1,Y2_1,Z2_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las2_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las3_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_1,X3_1,Y3_1,Z3_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las3_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las4_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_1,X4_1,Y4_1,Z4_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las4_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las5_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_1,X5_1,Y5_1,Z5_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las5_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las6_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_1,X6_1,Y6_1,Z6_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las6_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las7_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_1,X7_1,Y7_1,Z7_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las7_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las8_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_1,X8_1,Y8_1,Z8_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las8_1,0,0,75),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            SetDO doPLC_Ready,1;
+            IF Q_Freescyclus>4 Frezen;
+            IF Q_Freescyclus<>0 THEN
+                MoveL Offs(Las1_1,0,0,75),V_Trans,z10,Victoria\WObj:=wobjbaan3;
+        ENDIF
+        MoveL Offs(Las1_1,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+        SetDO doPLC_Busy,0;
+        WaitDI diPLC_Request,0;
+    ENDPROC 
+
+    !Procedure voor RVS staal.
+    PROC RVS()
+        VelSet 100,7000;
+        AccSet 100,100;
+        IF Vrygave1=1 Q_Freescyclus:=Q_Freescyclus+50;
+            MoveJ Offs(Las1_1,0,0,40),v1000,fine,Victoria\WObj:=wobjbaan3;
+            SetDO Sig_Las_verb,0;
+            SetDO doPLC_Busy,0;
+            SetDO doPLC_Ready,0;
+            WaitDI diPLC_Request,1;
+            SetDO doPLC_Busy,1;
+            Q_Freescyclus:=Q_Freescyclus+1;
+            MoveL Offs(Las1_1,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las1_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las1_1,X1_1,Y1_1,Z1_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las1_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las2_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las2_1,V_Pos_H,fine,tTOORTS\WObj:=wobjbaan3;
+            MoveL Offs(Las2_1,X2_1,Y2_1,Z2_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las2_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las3_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_1,X3_1,Y3_1,Z3_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las3_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las4_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_1,X4_1,Y4_1,Z4_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las4_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las5_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_1,X5_1,Y5_1,Z5_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las5_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las6_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_1,X6_1,Y6_1,Z6_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las6_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las7_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_1,X7_1,Y7_1,Z7_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las7_1,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_1,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las8_1,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_1,X8_1,Y8_1,Z8_1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las8_1,0,0,70),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveJ Offs(Las1_2,0,0,70),v1000,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Las1_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las1_2,X1_2,Y1_2,Z1_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las1_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las2_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las2_2,V_Pos_H,fine,tTOORTS\WObj:=wobjbaan3;
+            MoveL Offs(Las2_2,X2_2,Y2_2,Z2_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las2_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las3_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_2,X3_2,Y3_2,Z3_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las3_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las4_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_2,X4_2,y4_2,z4_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las4_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las5_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_2,X5_2,Y5_2,Z5_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las5_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las6_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_2,X6_2,Y6_2,Z6_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las6_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las7_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_2,X7_2,Y7_2,Z7_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las7_2,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_2,0,0,Hoogte1),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+            MoveL Las8_2,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_2,X8_2,Y8_2,Z8_2),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen;
+            MoveL Offs(Las8_2,0,0,75),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            SetDO doPLC_Ready,1;
+            IF Q_Freescyclus>4 Frezen;
+            IF Q_Freescyclus<>0 THEN
+            MoveL Offs(Las1_1,0,0,75),V_Trans,z10,Victoria\WObj:=wobjbaan3;
+        ENDIF
+        MoveL Offs(Las_1_1,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+        SetDO doPLC_Busy,0;
+        WaitDI diPLC_Request,0;
+    ENDPROC
+
+    !Procedure een las tussen twee spijlen. 
+    PROC Dubbel_Spyl()
+        VelSet 100,7000;
+        AccSet 100,100;
+        IF Vrygave1=1 Q_Freescyclus:=Q_Freescyclus+100;
+            MoveL Offs(Las1_3,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+            SetDO Sig_Las_verb,0;
+            SetDO doPLC_Busy,0;
+            SetDO doPLC_Ready,0;
+            WaitDI diPLC_Request,1;
+            SetDO doPLC_Busy,1;
+            Q_Freescyclus:=Q_Freescyclus+1;
+            MoveL Offs(Las1_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las1_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las1_3,X1_3,Y1_3,ZHoogte1_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las1_3,X1_3,Y1_3,ZHoogte1_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las1_3,X1_3,Y1_3,ZHoogte1_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las1_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las2_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las2_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las2_3,X2_3,Y2_3,ZHoogte2_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las2_3,X2_3,Y2_3,ZHoogte2_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las2_3,X2_3,Y2_3,ZHoogte2_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las2_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las3_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las3_3,X3_3,Y3_3,ZHoogte3_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las3_3,X3_3,Y3_3,ZHoogte3_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las3_3,X3_3,Y3_3,ZHoogte3_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las3_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las4_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las4_3,X4_3,Y4_3,ZHoogte4_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las4_3,X4_3,Y4_3,ZHoogte4_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las4_3,X4_3,Y4_3,ZHoogte4_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las4_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las5_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las5_3,X5_3,Y5_3,ZHoogte5_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las5_3,X5_3,Y5_3,ZHoogte5_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las5_3,X5_3,Y5_3,ZHoogte5_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las5_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las6_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las6_3,X6_3,Y6_3,ZHoogte6_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las6_3,X6_3,Y6_3,ZHoogte6_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las6_3,X6_3,Y6_3,ZHoogte6_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las6_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las7_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las7_3,X7_3,Y7_3,ZHoogte7_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las7_3,X7_3,Y7_3,ZHoogte7_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las7_3,X7_3,Y7_3,ZHoogte7_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las7_3,0,0,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_3,0,0,Hoogte1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            MoveL Las8_3,V_Pos_H,fine,Victoria\WObj:=wobjbaan3;
+            MoveL Offs(Las8_3,X8_3,Y8_3,ZHoogte8_1),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht1;
+            MoveL Offs(Las8_3,X8_3,Y8_3,ZHoogte8_2),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht2;
+            MoveL Offs(Las8_3,0,0,ZHoogte8_3),V_Trans,z1, Victoria\WObj:=wobjbaan3;
+            WaitTime 0.05;
+            Lassen_recht3;
+            MoveL Offs(Las8_3,X8_3,Y8_3,Hoogte1),V_Pos_W,z10,Victoria\WObj:=wobjbaan3;
+            SetDO doPLC_Ready,1;
+            GOTO Einde_Frezen;
+            IF Q_Freescyclus>2 Frezen;
+            IF Q_Freescyclus<>0 THEN
+            MoveL Offs(Las1_3,0,0,75),V_Trans,z10,Victoria\WObj:=wobjbaan3;
+        ENDIF
+        Einde_Frezen:
+        MoveL Offs(Las1_3,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+        SetDO doPLC_Busy,0;
+        WaitDI diPLC_Request,0;
+    ENDPROC
+
+    !Transportband rolt door de machine zonder dat de band wordt gelast.
+    PROC Transport()
+        SetDO doPLC_Ready,0;
+        WaitDI diPLC_Request,1;
+        SetDO doPLC_Busy,1;
+        WaitTime 10;
+        SetDO doPLC_Ready,1;
+        SetDO doPLC_Busy,0;
+        WaitDI diPLC_Request,0;
+        SetDO doPLC_Busy,0;
+    ENDPROC
+
+    !Standaard las procedure.
+    PROC Lassen()
+        WaitDI Geen_Gas,1;
+        SetDO Sig_Las_verb,1;
+        WaitTime 0.1;
+        SetDO Sig_Las_verb,0;
+        PulseDO\PLength:=WeldTime,doLas1;
+        WaitTime Wachten_DL1;
+        IF Geen_Las=0 Lasprobleem;
+    ENDPROC
+
+    !Eerste las procedure voor dubbel spijl. 
+    PROC Lassen_recht1()
+        WaitDI Geen_Gas,1;
+        SetDO Sig_Las_verb,1;
+        WaitTime 0.1;
+        SetDO Sig_Las_verb,0;
+        PulseDO\PLength:=WeldTime,doLas1;
+        WaitTime Wachten_DL1;
+        IF Geen_Las=0 Lasprobleem;
+    ENDPROC
+
+    !Tweede las procedure voor dubbel spijl.
+    PROC Lassen_recht2()
+        WaitDI Geen_Gas,1;
+        SetDO Sig_Las_verb,1;
+        WaitTime 0.3;
+        SetDO Sig_Las_verb,0;
+        PulseDO\PLength:=WeldTime,doLas1;
+        WaitTime Wachten_DL1;
+        IF Geen_Las=0 Lasprobleem;
+    ENDPROC
+
+    !Derde las procedure voor dubbel spijl.
+    PROC Lassen_recht3()
+        WaitDI Geen_Gas,1;
+        SetDO Sig_Las_verb,1;
+        WaitTime 0.5;
+        SetDO Sig_Las_verb,0;
+        PulseDO\PLength:=WeldTime,doLas1;
+        WaitTime Wachten_DL1;
+        IF Geen_Las=0 Lasprobleem;
+    ENDPROC
+
+    !Alarm procedure voor als er neit gelast wordt.
+    PROC Lasprobleem()
+        IF Geen_Las=0 SetDO Toeter,1;
+        p2:=CRobT(\Tool:=Victoria\WObj:=wobjbaan3);
+        p2.trans.z:=p2.trans.z+75;
+        MoveJ p2,v600,z10,Victoria\WObj:=wobjbaan3;
+        WaitDI Vrygave1,1;
+        SetDO Toeter,0;
+        WaitTime 3;
+        WaitDI Vrygave1,1;
+        p2:=CRobT(\Tool:=Victoria\WObj:=wobjbaan3);
+        p2.trans.z:=p2.trans.z-75;
+        MoveJ p2,v600,fine,Victoria\WObj:=wobjbaan3;
+        PulseDO\PLength:=WeldTime,doLas1;
+        WaitTime Wachten_DL1;
+    ENDPROC
+
+    !Borstel procedure voor schoonmaken langs de lasbaan.
+    PROC Borstellen()
+        VelSet 100,7000;
+        AccSet 100,100;
+        Borstel_tel:=0;
+        MoveL Offs(DR1P8,0,0,100),V_Hor,z1,Victoria\WObj:=wobjbaan3;
+        AccSet 75,75;
+        MoveL
+        RelTool(Borstel_start,60,60,0\Rx:=0\Ry:=0\Rz:=0),V_Borstellen,z10,Vict
+        ria\WObj:=wobjbaan3;
+        Borstel_begin:
+        AccSet 75,75;
+        MoveL Borstel_start,v400,fine,Victoria\WObj:=wobjbaan3;
+        MoveL Borstel_eind,V_Borstellen,fine,Victoria\WObj:=wobjbaan3;
+        IF Borstel_tel=Q_Borstel-1 THEN
+        SetDO Schoon_blazen,1;
+        ELSE
+        Reset Schoon_blazen;
+        ENDIF
+        AccSet 75,75;
+        MoveL Borstel_start,V_Borstellen,fine,Victoria\WObj:=wobjbaan3;
+        AccSet 100,100;
+        Borstel_tel:=Borstel_tel+1;
+        IF Borstel_tel<Q_Borstel GOTO Borstel_begin;
+        MoveL
+        Offs(Borstel_start,0,0,25),V_Borstellen,z1,Victoria\WObj:=wobjbaan3;
+        MoveL Offs(DR1P8,0,0,100),v600,z1,Victoria\WObj:=wobjbaan3;
+        MoveL Offs(DR1P1,0,0,Hoogte1),v600,z1,Victoria\WObj:=wobjbaan3;
+        Reset Schoon_blazen;
+    ENDPROC
+
+    !Procedure voor het schoonmaken van de torch. 
+    PROC Frezen()
+        VelSet 100,7000;
+        AccSet 100,100;
+        MoveL Offs(DR1P8,0,0,75),V_Trans,z10,Victoria\WObj:=wobjbaan3;
+        Borstellen;
+        MoveL Offs(Freesplek,-50,2,75),v600,z10,Victoria\WObj:=wobjbaan3;
+        MoveL Offs(Freesplek,0,2,75),v1000,fine,Victoria\WObj:=wobjbaan3;
+        WaitDI Frees_vry,1;
+        MoveL Offs(Freesplek,0,2,0),v800,fine,Victoria\WObj:=wobjbaan3;
+        MoveL Freesplek,v200,fine,Victoria\WObj:=wobjbaan3;
+        PulseDO\PLength:=Frees_tyd,Frees_puls;
+        WaitTime Frees_tyd+1;
+        WaitDI Frees_vry,1;
+        WaitTime 1;
+        MoveL Offs(Freesplek,0,2,0),v200,fine,Victoria\WObj:=wobjbaan3;
+        MoveL Offs(Freesplek,0,2,75),v2000,fine,Victoria\WObj:=wobjbaan3;
+        MoveJ Offs(Freesplek,-50,2,75),V_Trans,z10,Victoria\WObj:=wobjbaan3;
+        MoveL Offs(DR1P1,0,0,Hoogte1),V_Trans,z1,Victoria\WObj:=wobjbaan3;
+        Q_Freescyclus:=0;
+    ENDPROC
+
+    !Procedure om alle aangepaste X, Y en Z waardes weer op 0 te zetten. 
+    PROC Waardes_XYZ_Op_0()
+        X1_1:=0;
+        X1_2:=0;
+        X1_3:=0;
+        X2_1:=0;
+        X2_2:=0;
+        X2_3:=0;
+        X3_1:=0;
+        X3_2:=0;
+        X3_3:=0;
+        X4_1:=0;
+        X4_2:=0;
+        X4_3:=0;
+        X5_1:=0;
+        X5_2:=0;
+        X5_3:=0;
+        X6_1:=0;
+        X6_2:=0;
+        X6_3:=0;
+        X7_1:=0;
+        X7_2:=0;
+        X7_3:=0;
+        X8_1:=0;
+        X8_2:=0;
+        X8_3:=0;
+        Y1_1:=0;
+        Y1_2:=0;
+        Y1_3:=0;
+        Y2_1:=0;
+        Y2_2:=0;
+        Y2_3:=0;
+        Y3_1:=0;
+        Y3_2:=0;
+        Y3_3:=0;
+        Y4_1:=0;
+        Y4_2:=0;
+        Y4_3:=0;
+        Y5_1:=0;
+        Y5_2:=0;
+        Y5_3:=0;
+        Y6_1:=0;
+        Y6_2:=0;
+        Y6_3:=0;
+        Y7_1:=0;
+        Y7_2:=0;
+        Y7_3:=0;
+        Y8_1:=0;
+        Y8_2:=0;
+        Y8_3:=0;
+        Z1_1:=0;
+        Z1_2:=0;
+        Z1_3:=0;
+        Z2_1:=0;
+        Z2_2:=0;
+        Z2_3:=0;
+        Z3_1:=0;
+        Z3_2:=0;
+        Z3_3:=0;
+        Z4_1:=0;
+        Z4_2:=0;
+        Z4_3:=0;
+        Z5_1:=0;
+        Z5_2:=0;
+        Z5_3:=0;
+        Z6_1:=0;
+        Z6_2:=0;
+        Z6_3:=0;
+        Z7_1:=0;
+        Z7_2:=0;
+        Z7_3:=0;
+        Z8_1:=0;
+        Z8_2:=0;
+        Z8_3:=0;
+    ENDPROC
+ENDMODULE
+

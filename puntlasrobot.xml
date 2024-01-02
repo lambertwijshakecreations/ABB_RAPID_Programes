@@ -1,0 +1,723 @@
+MODULE Start1 
+
+    !Overige Modules in zelfde robot:
+    ! Start1	(Tafel 1)	
+    ! Start2	(Tafel 2)
+    ! LIJN_2	(Main Procedure)
+    ! CELLDATA	(Werkobjecten)
+    ! NIMAK		(Tools)
+    
+    !Tijd van las
+    CONST num LasLang:=1.5;
+    !Instellingen voor broodkoppels
+    LOCAL CONST num LASX:=0;
+    LOCAL CONST num LASOX:=0;
+    LOCAL CONST num SBLX1:=218;
+    LOCAL CONST num SBLY1:=0;
+    LOCAL CONST num SPX1:=323;
+    LOCAL CONST num SPY1:=0;
+    LOCAL CONST num APX1:=2;
+    LOCAL CONST num APY1:=0;
+    LOCAL CONST num ABLX1:=2;
+    LOCAL CONST num ABLY1:=0;
+    LOCAL CONST num OLX1:=0;
+    LOCAL CONST num OLX2:=0;
+    LOCAL CONST num OLY1:=0;
+    LOCAL CONST num OLY2:=0;
+    LOCAL CONST num HBK:=200;
+    LOCAL CONST num STLX:=0;
+    LOCAL CONST num STLX:=0;
+    LOCAL CONST num LASOX:=0;
+    LOCAL CONST num LASX:=0;
+    LOCAL CONST num SBLX2:=70;
+    LOCAL CONST num SBLY2:=0;
+    LOCAL CONST num SPX2:=175;
+    LOCAL CONST num SPY2:=0;
+    LOCAL CONST num APX2:=4;
+    LOCAL CONST num APY2:=0;
+    LOCAL CONST num ABLX2:=2;
+    LOCAL CONST num ABLY2:=0;
+    LOCAL CONST num OLX12:=10;
+    LOCAL CONST num OLX22:=60;
+    LOCAL CONST num OLY1:=0;
+    LOCAL CONST num OLY2:=0;
+    LOCAL CONST num HBK:=125;
+    LOCAL VAR num Npan:=0;
+    LOCAL VAR num Nlas:=0;
+    LOCAL VAR num Naantal2:=0;
+    VAR num Naantal:=0;
+    VAR num nTelmax:=0;
+    VAR num nTeller:=0;
+    !Robtargets:
+    CONST robtarget pHome:=[[1627.16,370.06,-5.87],[0.042811,-0.708026,-0.704874,-0.004471],[-1,0,-3,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pHome2:=[[1728.03,619.85,472.99],[0.03227,-0.697456,-0.714977,-0.036356],[-1,-1,-3,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget LASX2:=[[884.55,370.21,-234.39],[0.031519,0.711219,-0.700629,0.047898],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget LASX1:=[[1048.47,39.26,-235.38],[0.032335,-0.697551,-0.714879,-0.036416],[0,-1,-2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget P2OLY:=[[1104.02,546.78,22.43],[0.098104,0.022012,-0.994921,-0.004885],[0,0,-3,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget P1OLX:=[[214.25,122.03,-252.26],[0.037954,-0.698805,-0.711971,-0.0577],[-1,0,-3,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget P2OLX:=[[211.43,460.23,-246.96],[0.061208,0.712085,-0.696802,0.060467],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget P1OLY:=[[383.4,553.35,29.56],[0.034646,0.752859,-0.655439,0.049035],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    LOCAL CONST robtarget 
+    !Tools: Tlaskar :: De coördinaten staan onder een andere module 
+    !Werkobjecten: wobjTFL1, wobjTFL2 :: De coördinaten staan onder een andere module 
+
+    !Hoofdprogramma
+    PROC main ()
+        MoveJ pHome,v1000,fine,Tlaskar\WObj:=wobjTFL1;
+        WHILE TRUE DO
+            IF diOP_RDY1=1 THEN
+                Set doRST_RDY1;
+                Reset doRB_RDY1;
+                ClkReset clock1;
+                ClkStart clock1;
+                Tafel_1;
+                veiligheid_tang;
+                Naantal:=Naantal+1;
+                ClkStop clock1;
+                MoveJ pHome,v1000,fine,Tlaskar\WObj:=wobjTFL1;
+                PulseDO doTFL1_Los;
+                TPErase;
+                TPWrite "Tijd tafel 1 :"\Num:=ClkRead(clock1);
+                TPWrite "AANTAL VANDAAG : "\Num:=Naantal;
+                Reset doRST_RDY1;
+                PulseDO\PLength:=0.5,doRB_RDY1;
+            ENDIF
+            IF diOP_RDY2=1 THEN
+                Set doRST_RDY2;
+                Reset doRB_RDY2;
+                ClkReset clock1;
+                ClkStart clock1;
+                Tafel_2;
+                Naantal2:=Naantal2+1;
+                ClkStop clock1;
+                MoveJ pHome,v1000,fine,Tlaskar\WObj:=wobjTFL1;
+                PulseDO doTFL2_Los;
+                TPErase;
+                TPWrite "Tijd tafel 2 :"\Num:=ClkRead(clock1);
+                TPWrite "AANTAL VANDAAG : "\Num:=Naantal2;
+                Reset doRST_RDY2;
+                PulseDO\PLength:=0.5,doRB_RDY2;
+            ENDIF
+        ENDWHILE
+    ENDPROC
+
+    PROC Tafel_1 ()
+        Npan:=0;
+        WHILE Npan<APX1 DO
+            MoveJ Offs(P1OLX,Npan*SPX1,4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX1 DO
+                MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX1>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX1+OLX1,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+OLX1,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLX2>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX1+OLX2,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+OLX2,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<LASX DO
+            MoveJ Offs(LASX1,0,4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            MoveL Offs(LASX1,0,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            MoveL Offs(LASX1,STLX,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            Nlas:=Nlas+1;
+            IF LASOX>0 THEN
+                MoveL Offs(LASX1,STLX,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(LASX1,0,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(LASX1,0,3,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APX1 DO
+            MoveJ Offs(P2OLX,Npan*SPX1,-6,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX1 DO
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX1>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX1+OLX1,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+OLX1,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLX2>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX1+OLX2,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+OLX2,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            :=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<LASX DO
+            MoveJ Offs(LASX2,0,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            MoveL Offs(LASX2,0,-3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            MoveL Offs(LASX2,STLX,-3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            Nlas:=Nlas+1;
+            IF LASOX>0 THEN
+                MoveL Offs(LASX2,STLX,-3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(LASX2,0,-3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(LASX2,0,-3,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APY1 DO
+            MoveJ Offs(P1OLY,-8,Npan*SPY1,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLY1 DO
+                MoveL 098	Offs(P1OLY,5,Npan*SPY1+Nlas*SBLY1,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Kort;
+                MoveL Offs(P1OLY,5,Npan*SPY1+Nlas*SBLY1,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLY1>0 THEN
+                MoveL Offs(P1OLY,-3,Npan*SPY1+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Kort;
+                MoveL Offs(P1OLY,-3,Npan*SPY1+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLY2>0 THEN
+                MoveL Offs(P1OLY,-3,Npan*SPY1+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Kort;
+                MoveL Offs(P1OLY,-3,Npan*SPY1+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLY,-8,Npan*SPY1+Nlas*SBLY1,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APY1 DO
+            MoveJ Offs(P2OLY,-8,Npan*SPY1,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLY1 DO
+                MoveL Offs(P2OLY,-5,Npan*SPY1+Nlas*SBLY1,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Kort;
+                MoveL Offs(P2OLY,-5,Npan*SPY1+Nlas*SBLY1,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLY1>0 THEN
+                MoveL Offs(P2OLY,3,Npan*SPY1+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Kort;
+                MoveL Offs(P2OLY,3,Npan*SPY1+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLY2>0 THEN
+                MoveL Offs(P2OLY,3,Npan*SPY1+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Kort;
+                MoveL Offs(P2OLY,3,Npan*SPY1+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLY,-8,Npan*SPY1+Nlas*SBLY1,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+    ENDPROC
+
+    PROC Tafel_2	()
+        Npan:=0;
+        WHILE Npan<APX2 DO
+            MoveJ Offs(P1OLX,Npan*SPX2,5,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX2 DO
+                MoveL O	ffs(P1OLX,Npan*SPX2+Nlas*SBLX2,4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Nlas:=Nlas+1;
+                ENDWHILE
+            IF OLX12>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX2+OLX12,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+OLX12,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            IF OLX22>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX2+OLX22,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+OLX22,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL 024	Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,5,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<LASX DO
+            MoveJ Offs(LASX1,0,4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            MoveL Offs(LASX1,0,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            Lassen_Lang;
+            MoveL Offs(LASX1,STLX,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            Lassen_Lang;
+            Nlas:=Nlas-1;
+            IF LASOX>0 THEN
+                MoveL Offs(LASX1,STLX,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(LASX1,0,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(LASX1,0,3,HBK),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APX2 DO
+            MoveJ Offs(P2OLX,Npan*SPX2,-10,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2; 
+            Nlas:=0;
+            WHILE Nlas<ABLX2 DO
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX12>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX2+OLX12,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+OLX12,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            IF OLX22>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX2+OLX22,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+OLX22,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<LASX DO
+            MoveJ Offs(LASX2,0,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            MoveL Offs(LASX2,0,-3,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            Lassen_Lang;
+            MoveL Offs(LASX2,STLX,-3,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            Lassen_Lang;
+            Nlas:=Nlas-1;
+            IF LASOX>0 THEN
+                MoveL Offs(LASX2,STLX,-3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(LASX2,0,-3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(LASX2,0,-3,HBK),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        WHILE Npan<APY2 DO
+            MoveJ Offs(P1OLY,-15,Npan*SPY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLY2 DO
+                MoveL Offs(P1OLY,-5,Npan*SPY2+Nlas*SBLY2,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLY1>0 THEN
+                MoveL Offs(P1OLY,-3,Npan*SPY2+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            IF OLY2>0 THEN
+                MoveL Offs(P1OLY,-3,Npan*SPY2+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLY,-5,Npan*SPY2+Nlas*SBLY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APY2 DO
+            MoveJ Offs(P2OLY,5,Npan*SPY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLY2 DO
+                MoveL 117	Offs(P2OLY,5,Npan*SPY2+Nlas*SBLY2,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLY1>0 THEN
+                MoveL Offs(P2OLY,3,Npan*SPY2+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            IF OLY2>0 THEN
+                MoveL Offs(P2OLY,3,Npan*SPY2+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLY,5,Npan*SPY2+Nlas*SBLY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE   
+    ENDPROC
+
+    PROC Laskant_T1_P1olx ()
+        Npan:=0;
+        WHILE Npan<APX1 DO
+            MoveJ Offs(P1OLX,Npan*SPX1,4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX1 DO
+                MoveL 008	Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX1>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX1+OLX1,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+OLX1,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLX2>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX1+OLX2,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+OLX2,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,3,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+    ENDPROC
+
+    PROC Laskant_T1_P2olx ()
+        Npan:=0;
+        WHILE Npan<APX1 DO
+            MoveJ Offs(P2OLX,Npan*SPX1,-6,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX1 DO
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX1>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX1+OLX1,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+OLX1,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLX2>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX1+OLX2,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+OLX2,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+    ENDPROC
+
+    PROC Laskant_T2_P2olx ()
+        Npan:=0;
+        WHILE Npan<APX2 DO
+            MoveJ Offs(P2OLX,Npan*SPX2,-10,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Nlas:=0;
+            WHILE Nlas<ABLX2 DO
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX12>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX2+OLX12,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+OLX12,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            IF OLX22>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX2+OLX22,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+OLX22,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+    ENDPROC
+
+    PROC Laskant_T2_P1olx ()
+        Npan:=0;
+        WHILE Npan<APX2 DO
+            MoveJ Offs(P1OLX,Npan*SPX2,5,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX2 DO
+                MoveL 008	Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,4,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX12>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX2+OLX12,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+OLX12,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            IF OLX22>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX2+OLX22,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+OLX22,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,5,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+    ENDPROC
+
+    PROC VeBrtv1 ()
+        Npan:=0;
+        WHILE Npan<APX1 DO
+            MoveJ Offs(P1OLX,Npan*SPX1,7,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX1 DO
+                MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,7,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,1,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,7,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX1>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX1+OLX1,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+OLX1,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLX2>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX1+OLX2,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX1+OLX2,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLX,Npan*SPX1+Nlas*SBLX1,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<LASX DO
+            MoveJ Offs(LASX1,0,4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            MoveL Offs(LASX1,0,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            MoveL Offs(LASX1,20,3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            Nlas:=Nlas+1;
+            IF LASOX>0 THEN
+                MoveL Offs(LASX1,20,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(LASX1,0,3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(LASX1,0,3,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APX1 DO
+            MoveJ Offs(P2OLX,Npan*SPX1,-6,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX1 DO
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-7,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-1,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-7,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX1>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX1+OLX1,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+OLX1,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            IF OLX2>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX1+OLX2,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX1+OLX2,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLX,Npan*SPX1+Nlas*SBLX1,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<LASX DO
+            MoveJ Offs(LASX2,0,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            veiligheid_tang;
+            Nlas:=0;
+            MoveL Offs(LASX2,0,-3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            MoveL Offs(LASX2,20,-3,0),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+            Lassen_Lang;
+            Nlas:=Nlas+1;
+            IF LASOX>0 THEN
+                MoveL Offs(LASX2,20,-3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+                MoveL Offs(LASX2,0,-3,-13),vmax,fine,Tlaskar\WObj:=wobjTFL1;
+                Lassen_Lang;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(LASX2,0,-3,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL1;
+            Npan:=Npan+1;
+        ENDWHILE
+    ENDPROC
+
+    PROC VeBrtv2 ()
+        Npan:=0;
+        WHILE Npan<APX2 DO
+            MoveJ Offs(P1OLX,Npan*SPX2,7,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLX2 DO
+                MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,7,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,1,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,7,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX12>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX2+OLX12,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+OLX12,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            IF OLX22>0 THEN
+                MoveL Offs(P1OLX,Npan*SPX2+OLX22,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P1OLX,Npan*SPX2+OLX22,4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLX,Npan*SPX2+Nlas*SBLX2,5,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APX2 DO
+            MoveJ Offs(P2OLX,Npan*SPX2,-10,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Nlas:=0;
+            WHILE Nlas<ABLX2 DO
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-7,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-1,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-7,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLX12>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX2+OLX12,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+OLX12,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            IF OLX22>0 THEN
+                MoveL Offs(P2OLX,Npan*SPX2+OLX22,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Lang;
+                MoveL Offs(P2OLX,Npan*SPX2+OLX22,-4,-13),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLX,Npan*SPX2+Nlas*SBLX2,-4,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APY2 DO
+            MoveJ Offs(P1OLY,-15,Npan*SPY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLY2 DO
+                MoveL Offs(P1OLY,-5,Npan*SPY2+Nlas*SBLY2,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLY1>0 THEN
+                MoveL Offs(P1OLY,-3,Npan*SPY2+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            IF OLY2>0 THEN
+                MoveL Offs(P1OLY,-3,Npan*SPY2+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P1OLY,-5,Npan*SPY2+Nlas*SBLY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+        Npan:=0;
+        WHILE Npan<APY2 DO
+            MoveJ Offs(P2OLY,5,Npan*SPY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            veiligheid_tang;
+            Nlas:=0;
+            WHILE Nlas<ABLY2 DO
+                MoveL Offs(P2OLY,5,Npan*SPY2+Nlas*SBLY2,0),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+                Nlas:=Nlas+1;
+            ENDWHILE
+            IF OLY1>0 THEN 
+                MoveL Offs(P2OLY,3,Npan*SPY2+OLY1,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            IF OLY2>0 THEN
+                MoveL Offs(P2OLY,3,Npan*SPY2+OLY2,-8),vmax,fine,Tlaskar\WObj:=wobjTFL2;
+                Lassen_Kort;
+            ENDIF
+            Nlas:=Nlas-1;
+            MoveL Offs(P2OLY,5,Npan*SPY2+Nlas*SBLY2,HBK),vmax,z50,Tlaskar\WObj:=wobjTFL2;
+            Npan:=Npan+1;
+        ENDWHILE
+    ENDPROC
+
+    PROC Lassen_Lang ()
+        lastang_dicht;
+        SetDO doLasprog1,1;
+        WaitDI diLasgereed,1;
+        SetDO doLasprog1,0;
+        lastang_open;
+    ENDPROC
+
+    PROC Lassen_Kort ()
+        lastang_dicht;
+        SetDO doLasprog2,1;
+        WaitDI diLasgereed,1;
+        SetDO doLasprog2,0;
+        lastang_open;
+    ENDPROC
+
+    PROC lastang_open ()
+        SetDO doGun_Preclose,1;
+        SetDO doGun_Close,0;
+        veiligheid_tang;
+    ENDPROC
+
+    PROC lastang_dicht ()
+        SetDO doGun_Preclose,1;
+        SetDO doGun_Close,1;
+    ENDPROC
+
+    PROC veiligheid_tang ()
+        WaitDI diGun_Open,0;
+        WaitDI diGun_PreClosed,1;
+    ENDPROC
+ENDMODULE
+
+
